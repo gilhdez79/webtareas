@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+{% block sub_content %}
+<div class="container">
+  <h1>Registrar tarea</h1>
+</div>
+<hr />
+<div class="container">
+  <div class="col-5">
+<form action="{{ url_for('insert_data') }}" method="post">
+  <div class="form-group well">
+    <label for="texTarea">Id_tarea</label>
+    <input type="text" name="txtTarea" readonly="true" class="form-control" id="txtTarea"  aria-describedby="emailHelp">
+    <small id="emailHelp" class="form-text text-muted">Se autogenera</small>
+  </div>
+  <div class="form-group well">
+    <label for="txtDescipcion">Descripcion</label>
+    <input type="textarea" name = "txtDescipcion"class="form-control"  id="txtDescipcion">
+  </div>
+<div class="form-group well">
+  <label for="Fecha">Fecha</label>
+  <input type="date" name="txtFecha"  data-date-format="YYYY/MM/DD"  class="form-control"id="txtFecha">
+</div>
+<div class="form-group well">
+  <label for="txtHora">Hora</label>
+ <input type="time" name="txtHora" class="form-control" id="txtHora" min="00:30" max="02:00" step="600">
+  <small id="emailHelp" class="form-text text-muted">Hora : Minutos</small>
+</div>
+  <button type="submit" class="btn btn-primary">Guardar</button>
+  <button type="button" class="btn btn-primary">Cancelar</button>
+</form>
+</div
+</div>
+{% endblock %}

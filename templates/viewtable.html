@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{{super()}}
+
+
+ {% block javascript %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        $(".nav a").on("click", function(){
+           $(".nav").find(".active").removeClass("active");
+           $(this).parent().addClass("active");
+        });
+      console.log('Ejmplo')
+    </script>
+    <!-- The contents of myscript.js will be loaded inside the script tag -->
+{% endblock %}
+
+{% endblock %}
+
+{% block sub_content %}
+
+<div class="container well">
+<button type="button" onclick="window.location.href='{{ url_for('viewtable') }}';" class="btn btn-primary">Todas Tareas</button>
+<button type="button" onclick="window.location.href='{{ url_for('getstatus', status=1) }}';" class="btn btn-primary">Tareas Completadas</button>
+<button type="button"   onclick="window.location.href='{{ url_for('getstatus', status=0) }}';" class="btn btn-primary">Tareas Pendientes</button>
+</div>
+
+<div class="container m-2">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Tarea</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Duracion</th>
+        <th scope="col">Editar</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+
+              <tr>
+                <td>{{ row.id_tarea }}</td>
+                <td>{{ row.descripcion }}</td>
+                <td>{{ arrowget(row['fecha']).format('YYYY-MM-DD') }}</td>
+                <td>{{ row.duracion }}</td>
+                <td>
+                  <a href="{{ url_for('editar', item= row) }}">
+                  <span>{{ row.id_tarea}}</span>
+                  </a>
+                  <a href="{{ url_for('eliminar', item= row) }}">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                  </a>
+              </td>
+              </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+{% endblock %}
