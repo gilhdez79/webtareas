@@ -18,6 +18,9 @@ from pandas import DataFrame, Series
 from pandas.io.json import json_normalize
 from jinja2 import Environment, PackageLoader, select_autoescape
 import jinja2
+from config import Config
+
+
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -34,7 +37,10 @@ context={
     'arrowget': arrow.get
 }
 
-urlAPI  = 'http://localhost:5001/api/tarea/'
+# urlAPI  = 'http://localhost:5001/api/tarea/'
+
+configuracion = Config()
+urlAPI = configuracion.UrlApIProd();
 secret = secrets.token_urlsafe(32)
 
 app.secret_key = secret
@@ -56,9 +62,7 @@ def blogs():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     return render_template('register.html')
-    # if request.method == 'GET':
-        #userDetails = request.form
-        # exampleInputEmail1 = userDetails["exampleInputEmail1"]
+
 @app.route('/viewtable', methods=["GET"])
 def viewtable():
     response= requests.get(urlAPI + 'all')
@@ -66,7 +70,7 @@ def viewtable():
 
 
     # flash('Ejemplo de Mensajes',"danger")
-    return render_template('viewtable.html', rows= data,**context)
+    return render_template('viewtable.html', rows= data,  tituloTarea = "Todas las Tareas" ,**context)
 # Obteneer las tareas compleadas
 @app.route('/getstatus/<status>', methods=["GET", "POST"])
 def getstatus(status):
@@ -74,8 +78,14 @@ def getstatus(status):
     _data = status
     response= requests.get(urlAPI + 'getstatus/'+_data, headers={"Content-Type": "application/json"})
     data = response.json();
+
+    titulo = ""
+    if status == "1":
+        titulo= "Tareas Completadas"
+    if status == "0":
+        titulo = "Tareas Pendiendes"
     # flash('Ejemplo de Mensajes',"danger")
-    return render_template('viewtable.html', rows= data,**context)
+    return render_template('viewtable.html', rows= data,tituloTarea = titulo, **context)
 # Obteneer las tareas compleadas
 
 @app.route('/editar/<item>', methods=["GET", "POST"])
