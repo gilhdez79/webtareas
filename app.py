@@ -19,6 +19,7 @@ from pandas.io.json import json_normalize
 from jinja2 import Environment, PackageLoader, select_autoescape
 import jinja2
 from config import Config
+from tools import getHours
 
 
 
@@ -40,7 +41,7 @@ context={
 # urlAPI  = 'http://localhost:5001/api/tarea/'
 
 configuracion = Config()
-urlAPI = configuracion.UrlApIProd();
+urlAPI = configuracion.UrlApiLocal();
 secret = secrets.token_urlsafe(32)
 
 app.secret_key = secret
@@ -65,12 +66,15 @@ def register():
 
 @app.route('/viewtable', methods=["GET"])
 def viewtable():
-    response= requests.get(urlAPI + 'all')
-    data = response.json();
-
-
+    try:
+        print("-------URLAPI---------")
+        print(urlAPI)
+        response= requests.get(urlAPI + 'all')
+        data = response.json();
     # flash('Ejemplo de Mensajes',"danger")
-    return render_template('viewtable.html', rows= data,  tituloTarea = "Todas las Tareas" ,**context)
+        return render_template('viewtable.html', rows= data,  tituloTarea = "Todas las Tareas" ,**context)
+    except:
+        print("Errores ");
 # Obteneer las tareas compleadas
 @app.route('/getstatus/<status>', methods=["GET", "POST"])
 def getstatus(status):
@@ -146,6 +150,20 @@ def update_data():
     response= requests.put(urlAPI, data=_data, headers={"Content-Type": "application/x-www-form-urlencoded"})
 
     return render_template('index.html')
+
+ # Completar Tares
+@app.route('/completedata/<idtarea>/<tiempo>', methods=['GET','POST'])
+def completedata(idtarea,tiempo):
+    completo=0
+    _data = {
+        'id_tarea':idtarea,
+        'tiempocomp':tiempo
+    }
+
+    # Actualizamos los datos
+    response= requests.put(urlAPI+"completado", data=_data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+    return render_template('index.html')
 # Guardar en la BD
 @app.route('/insert_data', methods=['POST'])
 def insert_data():
@@ -166,6 +184,10 @@ def insert_data():
    response= requests.post(urlAPI+ 'registra', data=_data, headers={"Content-Type": "application/x-www-form-urlencoded"})
    return render_template('index.html')
 
+@app.route('/timer', methods=["GET", "POST"])
+def timer():
+    return render_template('timer.html')
+
 # Graficar
 @app.route('/graficas')
 def graficas():
@@ -178,7 +200,7 @@ def graficas():
     z = df.query('completo == 1' )[['tiempocomp','id_tarea']]
 
     yvalue = z["tiempocomp"].head()
-    ymap=yvalue.map(lambda x: int(x))
+    ymap=yvalue.map(lambda x: getHours(x))
     yl = list(set(ymap))
 
     auxData = z['id_tarea'].head()

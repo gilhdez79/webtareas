@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block head %}
+{{super()}}
+
+
+ {% block javascript %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        $(function(){
+
+
+  var fiveMinutes = 60 * 5,
+    display = document.querySelector('#time');
+    startTimer(fiveMinutes, display)
+
+
+  })
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    minutes = minutes < 10 ? "0" + minutes : minutes; seconds=seconds < 10 ? "0" + seconds : seconds;
+    display.textContent=minutes + ":" + seconds; if (--timer < 0) { timer=duration; } }, 1000);
+    }
+    </script>
+    <!-- The contents of myscript.js will be loaded inside the script tag -->
+{% endblock %}
+
+{% endblock %}
+
+{% block sub_content %}
+<body class="container">
+    <div class="well">Registration closes in <span id="time">05:00</span> minutes!</div>
+</body>
+{% endblock %}

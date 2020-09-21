@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{{ JSGlue.include() }}
 {% block head %}
 {{super()}}
 
@@ -8,27 +8,86 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-        $(function(){
-            console.log({{id_tarea['completo']}})
-            if ({{id_tarea['completo']}} ===1) {
-               $("#chkCompletado").attr('checked', true);
-            }else{
-                  $("#chkCompletado").attr('checked', false);
-                  }
-            })
+let tiempoT;
+let tiempoR;
+let idTarea;
+$(function () {
+	// idTarea= {{id_tarea['id_tarea']}};
+
+ //console.log({{id_tarea['completo']}})
+	if ({{id_tarea['completo']}} === 1) {
+		$("#chkCompletado").attr('checked', true);
+	} else {
+		$("#chkCompletado").attr('checked', false);
+	}
+})
+
+function iniciar(tiempo) {
+	var fiveMinutes = 60 * tiempo,
+		display = document.querySelector('#time');
+    tiempoT=	startTimer(fiveMinutes, display);
+	 // window.location.href = '{{ url_for("index", idtarea= id_tarea["id_tarea"], tiempocomp= "tiempoT")}}'.replace("tiempoT",tiempoT);
+}
+
+function startTimer(duration, display) {
+	var timer = duration,	minutes, seconds;
+  return 	setInterval(function () {
+		minutes = parseInt(timer / 60, 10);
+		seconds = parseInt(timer % 60, 10);
+
+		minutes = minutes < 10 ? "0" + minutes : minutes;
+		seconds = seconds < 10 ? "0" + seconds : seconds;
+		display.textContent = minutes + ":" + seconds;
+
+		//tiempoT = timer;
+		if (--timer < 1) {
+			//timer = duration;
+			timer = 0;
+      tiempoR=  duration;
+			display.textContent = "Tiempo Terminado";
+      pause();
+      window.location.href = '{{ url_for("completedata", idtarea= id_tarea["id_tarea"], tiempo= "tiempoT")}}'.replace("tiempoT",tiempoR);
+		}
+  return timer;
+	}, 1000);
+
+}
+function pause() {
+  // Clear the interval to stop the timer
+ display = document.querySelector('#time');
+ for(i=0; i<100; i++)
+    {
+        window.clearInterval(i);
+    }
+  clearInterval(tiempoT);
+  console.log("pause");
+  tiempoR=  display.textContent ;
+  window.location.href = '{{ url_for("completedata", idtarea= id_tarea["id_tarea"], tiempo= "tiempoT")}}'.replace("tiempoT",tiempoR);
+
+}
     </script>
     <!-- The contents of myscript.js will be loaded inside the script tag -->
 {% endblock %}
 
 {% endblock %}
-
-
 {% block sub_content %}
 
 
 <h1>Editar tarea <span>{{id_tarea["id_tarea"]}}</span></h1>
 <hr />
 <div class="container">
+<div class="row">
+  <div class="col-lg-5" style="margin-top:0.9em">
+    <button type="button" class="btn btn-primary" onclick="iniciar(1)">Iniciar Tarea</button>
+    <button type="button" class="btn btn-primary" onclick="pause()">Terminar Tarea</button>
+
+</div>
+
+  <div >
+      <div class="well">Tiempo para terminar la Tarea  <span id="time" class="h3">05:00</span> minutos!</div>
+  </div>
+</div>
+
   <div class="col-5">
 <form action="{{ url_for('update_data') }}" method="post">
   <div class="form-group well">
